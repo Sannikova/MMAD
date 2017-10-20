@@ -2,24 +2,25 @@ from python_speech_features import mfcc
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io.wavfile as wav
-from numpy.fft import fft, rfftfreq
+from numpy.fft import fft, fftn
 import math
 
 
 (rate,sig) = wav.read("D:\\usr0001_male_youth_008.wav")
 #print('rate: ',rate)
-#print('signal: ',sig)
+print('signal: ',sig)
 #print('len signal: ', len(sig))
 
 #Вычисление мел-кепстральных коэффициентов с помощью библиотеки python_speech_features
 mfcc_feat = mfcc(sig,rate)
-print('MFCC: ',len(mfcc_feat))
+print('MFCC: ',mfcc_feat)
 
 #Пишем MFCC сами
 
 #1.Разложение в ряд Фурье
-N=256#Длина фрейма
-X = fft(sig,N)
+#N=256#Длина фрейма
+X = fft(sig)
+N=len(X)
 for k in range(N-1):
     Hemming_window = 0.54 - 0.46*np.cos(2*np.pi*k/(N-1))
     X[k]=X[k]*Hemming_window
@@ -34,30 +35,34 @@ def toFrequency(M):#Функция преобразования мел в час
     return F
 
 M = 13 #Кол-во мел-опорных коэффициентов
-F_n = M + 2 #Количество опортных точек
-m = np.zeros((F_n))
-F_start = toMel(300) #Начальное значение мел-интервала
-F_finish = toMel(8000) #Конечное значение
-F_step = (F_finish - F_start)/(F_n-1) #Шаг между значениями
+F_n = 28 #Количество опортных точек для построения 26 фильтров
+m_point = np.zeros((F_n))
+F_start = toMel(0) #Начальное значение мел-интервала в Гц
+F_finish = toMel(rate/2) #Конечное значение
+#F_step = (F_finish - F_start)/(F_n-1) #Шаг между значениями
+F_step = 0.01
 F=F_start
 
 for i in range(F_n):
-    m[i]=F
+    m_point[i]=F
     F=F+F_step
-#print('m[i]: ', m)
+print('m[i]: ', m_point)
 
 h = np.zeros((F_n))
 for i in range(F_n):
-    h[i] = toFrequency(m[i])
-#print('h[i]: ', h)
+    h[i] = toFrequency(m_point[i])
+print('h[i]: ', h)
 
 f = np.zeros((F_n))
 sampleRate = rate
 frameSize = N
+print('frameSize',frameSize)
 for i in range(F_n):
     temp = (frameSize+1)*h[i]/sampleRate
+    print('temp ',temp)
     f[i]=math.floor(temp)
-#print('f[i]: ', f)
+    print('f[',i,']=',f[i])
+print('f[i]: ', f)
 
 H = np.ones(((M,N)))
 for m in range(M):
