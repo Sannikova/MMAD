@@ -1,2 +1,0 @@
-# MMAD
-for kursach
