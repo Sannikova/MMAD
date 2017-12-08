@@ -33,7 +33,6 @@ def generateFilters(minF,maxF,count,sampleRate,fftSize):
 
 # дискретное косинусное преобразование-2 с нормировкой
 def dctNorm(x):
-#TODO: just do it
     N = len(x)
     y = np.zeros(N)
 
@@ -47,17 +46,13 @@ def dctNorm(x):
     return y
 
 def sampleCount(duration, sampleRate):
-    #TODO: just do it
     return int(duration * sampleRate)
 
 def signalWindowSize(duration, sampleRate):
-    #TODO: just do it
     return sampleCount(duration, sampleRate)
 
 def spectrumWindowSize(duration, sampleRate):
-    #TODO: just do it
     return signalWindowSize(duration, sampleRate) // 2
 
 def hemmingWindow(M):
-    #TODO: just do it
     return 0.54-0.46*np.cos((2*np.pi*np.arange(0,M)/(M-1)))
